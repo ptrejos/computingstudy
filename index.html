@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balotario — Herramientas Informáticas y Ciberseguridad 2026-I</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --navy:    #0B1C2E;
+    --navy2:   #132540;
+    --teal:    #00C9A7;
+    --teal-dk: #009E83;
+    --amber:   #FFB830;
+    --red:     #FF4D6A;
+    --green:   #2ECC8B;
+    --white:   #F0F4F8;
+    --gray:    #8DA0B5;
+    --card:    #162C45;
+    --border:  #1E3A58;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── HEADER ─────────────────────────────────── */
+  header {
+    width: 100%;
+    background: var(--navy2);
+    border-bottom: 2px solid var(--teal);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .logo-badge {
+    width: 44px; height: 44px;
+    background: var(--teal);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--navy);
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: clamp(14px, 2.5vw, 19px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  header h1 span {
+    color: var(--teal);
+  }
+
+  /* ── MAIN CONTAINER ─────────────────────────── */
+  main {
+    width: 100%;
+    max-width: 860px;
+    padding: 40px 20px 60px;
+  }
+
+  /* ── SCREEN VISIBILITY ──────────────────────── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── HOME SCREEN ────────────────────────────── */
+  #home-screen h2 {
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  #home-screen h2 em {
+    font-style: normal;
+    color: var(--teal);
+  }
+  .subtitle {
+    color: var(--gray);
+    font-size: 15px;
+    margin-bottom: 40px;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .mode-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 18px;
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+    text-align: center;
+  }
+  .mode-card:hover { border-color: var(--teal); transform: translateY(-2px); }
+  .mode-card.selected { border-color: var(--teal); background: #0D3048; }
+  .mode-card .num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--teal);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .mode-card .lbl {
+    font-size: 13px;
+    color: var(--gray);
+  }
+  .mode-card.selected .lbl { color: var(--white); }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+  .topic-chip {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: border-color .2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topic-chip:hover { border-color: var(--teal); }
+  .topic-chip.selected { border-color: var(--teal); background: #0D3048; }
+  .topic-chip .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: background .15s, border-color .15s;
+  }
+  .topic-chip.selected .dot { background: var(--teal); border-color: var(--teal); }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--teal);
+    color: var(--navy);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .btn-primary:hover { background: var(--teal-dk); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* ── QUIZ SCREEN ────────────────────────────── */
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .quiz-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--gray);
+  }
+  .quiz-meta strong { color: var(--teal); font-size: 14px; }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 2px;
+    transition: width .4s ease;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 18px;
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .question-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .question-text {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .option-btn {
+    background: var(--navy2);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color .15s, background .15s;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--teal); background: #0D2F49; }
+  .option-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+    min-width: 22px;
+  }
+  .option-btn.correct {
+    border-color: var(--green);
+    background: rgba(46, 204, 139, .12);
+  }
+  .option-btn.correct .option-key { color: var(--green); }
+  .option-btn.wrong {
+    border-color: var(--red);
+    background: rgba(255, 77, 106, .12);
+  }
+  .option-btn.wrong .option-key { color: var(--red); }
+  .option-btn:disabled { cursor: default; }
+
+  .feedback-box {
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-size: 14px;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .feedback-box.show { display: flex; }
+  .feedback-box.ok  { background: rgba(46,204,139,.15); border: 1.5px solid var(--green); color: var(--green); }
+  .feedback-box.ko  { background: rgba(255,77,106,.15);  border: 1.5px solid var(--red);   color: #ff8fa0; }
+  .feedback-icon { font-size: 20px; flex-shrink: 0; }
+
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+  .btn-next {
+    display: none;
+    background: var(--teal);
+    color: var(--navy);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .btn-next.visible { display: inline-block; }
+  .btn-next:hover { background: var(--teal-dk); }
+
+  /* ── RESULTS SCREEN ─────────────────────────── */
+  .results-hero {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .score-ring {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    border: 6px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+  .score-ring.great { border-color: var(--green); }
+  .score-ring.ok    { border-color: var(--amber); }
+  .score-ring.bad   { border-color: var(--red);   }
+  .score-pct {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .score-pct.great { color: var(--green); }
+  .score-pct.ok    { color: var(--amber); }
+  .score-pct.bad   { color: var(--red);   }
+  .score-sub { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .results-hero h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .results-hero p  { color: var(--gray); font-size: 14px; margin-bottom: 24px; }
+
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: var(--navy2);
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat-chip .val { font-weight: 700; }
+  .stat-chip.cor .val { color: var(--green); }
+  .stat-chip.inc .val { color: var(--red);   }
+
+  .review-section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .review-item {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-left: 4px solid var(--red);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 14px;
+  }
+  .review-q-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .review-q-text { font-size: 15px; font-weight: 600; margin-bottom: 14px; line-height: 1.4; }
+  .review-answers { display: flex; flex-direction: column; gap: 6px; }
+  .review-answer {
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .review-answer.your-wrong { background: rgba(255,77,106,.1); color: #ff8fa0; }
+  .review-answer.correct    { background: rgba(46,204,139,.1); color: var(--green); }
+  .review-answer .ak {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    min-width: 20px;
+  }
+
+  .result-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+  }
+  .btn-secondary {
+    background: var(--card);
+    color: var(--white);
+    border: 2px solid var(--border);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--teal); }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--border);
+    margin-top: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── ORDER MODE ─────────────────────────────── */
+  .order-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .order-btn {
+    flex: 1;
+    min-width: 140px;
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    transition: border-color .2s, background .2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .order-btn:hover { border-color: var(--teal); }
+  .order-btn.selected { border-color: var(--teal); background: #0D3048; }
+  .order-btn .ob-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .order-btn .ob-label { font-size: 14px; font-weight: 600; }
+  .order-btn .ob-desc  { font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .order-btn.selected .ob-desc { color: #8ecfbd; }
+
+  /* range panel */
+  .range-panel {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 28px;
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .range-panel.visible { display: flex; }
+  .range-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .range-row label {
+    font-size: 13px;
+    color: var(--gray);
+    min-width: 80px;
+  }
+  .range-row input[type=number] {
+    width: 90px;
+    background: var(--navy2);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    color: var(--white);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 15px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .range-row input[type=number]:focus { border-color: var(--teal); }
+  .range-hint {
+    font-size: 12px;
+    color: var(--gray);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .range-hint span { color: var(--teal); }
+  .range-error {
+    font-size: 13px;
+    color: var(--red);
+    display: none;
+  }
+  .range-error.visible { display: block; }
+
+  /* quiz mode badge */
+  .mode-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: rgba(0,201,167,.15);
+    color: var(--teal);
+    border: 1px solid rgba(0,201,167,.3);
+  }
+
+  @media (max-width: 560px) {
+    .question-card { padding: 20px; }
+    main { padding: 24px 14px 48px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">HIC</div>
+  <h1>Balotario — <span>Herramientas Informáticas</span> y Ciberseguridad 2026-I</h1>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <div id="home-screen" class="screen active">
+    <h2>Pon a prueba<br><em>tu conocimiento</em></h2>
+    <p class="subtitle">Selecciona cuántas preguntas quieres responder y comienza el test.</p>
+
+    <p class="section-label">Número de preguntas</p>
+    <div class="mode-grid">
+      <div class="mode-card" data-size="10">
+        <span class="num">10</span>
+        <span class="lbl">Test rápido</span>
+      </div>
+      <div class="mode-card" data-size="20">
+        <span class="num">20</span>
+        <span class="lbl">Test medio</span>
+      </div>
+      <div class="mode-card" data-size="40">
+        <span class="num">40</span>
+        <span class="lbl">Test largo</span>
+      </div>
+      <div class="mode-card" data-size="160">
+        <span class="num">160</span>
+        <span class="lbl">Balotario completo</span>
+      </div>
+    </div>
+
+    <p class="section-label">Modo de preguntas</p>
+    <div class="order-toggle">
+      <button class="order-btn selected" id="mode-random" type="button">
+        <span class="ob-icon">🔀</span>
+        <div>
+          <div class="ob-label">Aleatorio</div>
+          <div class="ob-desc">Preguntas mezcladas del banco completo</div>
+        </div>
+      </button>
+      <button class="order-btn" id="mode-seq" type="button">
+        <span class="ob-icon">🔢</span>
+        <div>
+          <div class="ob-label">En secuencia</div>
+          <div class="ob-desc">Elige rango de inicio y fin</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="range-panel" id="range-panel">
+      <div class="range-hint">El balotario tiene <span>160</span> preguntas en total (numeradas del 1 al 160).</div>
+      <div class="range-row">
+        <label for="range-from">Desde (Nº)</label>
+        <input type="number" id="range-from" min="1" max="160" value="1" />
+      </div>
+      <div class="range-row">
+        <label for="range-to">Hasta (Nº)</label>
+        <input type="number" id="range-to" min="1" max="160" value="40" />
+      </div>
+      <div class="range-error" id="range-error">⚠ El número de inicio debe ser menor que el de fin, y el rango debe tener al menos 2 preguntas.</div>
+    </div>
+
+    <button class="btn-primary" id="start-btn" disabled>
+      Comenzar test →
+    </button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz-screen" class="screen">
+    <div class="quiz-header">
+      <div class="quiz-meta">
+        Pregunta <strong id="q-current">1</strong> de <strong id="q-total">—</strong>
+        &nbsp;<span class="mode-badge" id="mode-badge">Aleatorio</span>
+      </div>
+      <div class="quiz-meta" id="q-score-live">✓ 0 &nbsp;✗ 0</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-num" id="q-num-label"></div>
+      <div class="question-text" id="q-text"></div>
+      <div class="options-list" id="q-options"></div>
+    </div>
+
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <span id="feedback-msg"></span>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-next" id="btn-next">Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-screen" class="screen">
+    <div class="results-hero">
+      <div class="score-ring" id="score-ring">
+        <span class="score-pct" id="score-pct-val"></span>
+        <span class="score-sub">puntaje</span>
+      </div>
+      <h2 id="result-heading"></h2>
+      <p id="result-sub"></p>
+      <div class="stats-row">
+        <div class="stat-chip cor">✓ <span class="val" id="stat-correct">0</span> correctas</div>
+        <div class="stat-chip inc">✗ <span class="val" id="stat-wrong">0</span> incorrectas</div>
+        <div class="stat-chip">📝 <span class="val" id="stat-total">0</span> preguntas</div>
+      </div>
+    </div>
+
+    <div class="review-section" id="review-section">
+      <h3>🔍 Preguntas incorrectas — revisa las respuestas</h3>
+      <div id="review-list"></div>
+    </div>
+
+    <div class="result-btns">
+      <button class="btn-secondary" id="btn-retry">Repetir mismo test</button>
+      <button class="btn-primary"   id="btn-home">Nuevo test</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>IESTPN-CITEN · 2026-I · T3 PDA. Trejo Sare Pablo Alejandro</footer>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  BANCO DE PREGUNTAS  (160 preguntas, 4 temas)
+// ══════════════════════════════════════════════════════════════
+const BANK = [
+  // ── TEMA 1: Introducción a la Informática e Internet ────────
+  { q:"¿Qué se entiende por informática?", opts:["El estudio de las redes sociales","La ciencia que procesa información mediante sistemas computacionales","El uso exclusivo de Internet","La reparación de computadoras"], ans:1 },
+  { q:"¿Cuál es la función principal de un sistema operativo?", opts:["Crear páginas web","Administrar los recursos del hardware y software","Diseñar gráficos","Realizar videoconferencias"], ans:1 },
+  { q:"¿Cuál de los siguientes es un dispositivo de entrada?", opts:["Monitor","Impresora","Teclado","Parlante"], ans:2 },
+  { q:"¿Qué característica distingue a la memoria RAM?", opts:["Almacena datos permanentemente","Es una memoria volátil","Solo contiene el sistema operativo","No puede modificarse"], ans:1 },
+  { q:"¿Cuál es la principal función de una base de datos?", opts:["Diseñar presentaciones","Gestionar y organizar información","Navegar en Internet","Crear videos"], ans:1 },
+  { q:"¿Qué protocolo se utiliza para navegar de forma segura en la web?", opts:["FTP","HTTP","HTTPS","SMTP"], ans:2 },
+  { q:"¿Cuál de los siguientes servicios pertenece al almacenamiento en la nube?", opts:["Paint","Google Drive","Bloc de notas","VLC"], ans:1 },
+  { q:"¿Qué significa la sigla CPU?", opts:["Central Process Unit","Computer Personal Unit","Central Processing Unit","Control Processing Utility"], ans:2 },
+  { q:"¿Cuál es una ventaja del uso de plataformas virtuales educativas?", opts:["Reducen el acceso a la información","Facilitan el aprendizaje colaborativo","Eliminan la necesidad de evaluación","Sustituyen totalmente al docente"], ans:1 },
+  { q:"¿Qué es un navegador web?", opts:["Un antivirus","Un gestor de archivos","Un programa para acceder a sitios web","Un sistema operativo"], ans:2 },
+  { q:"¿Cuál de los siguientes es un buscador de Internet?", opts:["Zoom","Chrome","Google","Word"], ans:2 },
+  { q:"¿Cuál es la función principal del correo electrónico?", opts:["Diseñar documentos","Enviar y recibir mensajes digitales","Almacenar archivos","Programar aplicaciones"], ans:1 },
+  { q:"¿Qué es una dirección IP?", opts:["Un programa de Internet","Un identificador único de un dispositivo en una red","Un antivirus","Un navegador"], ans:1 },
+  { q:"¿Cuál es una característica de la computación en la nube?", opts:["Requiere almacenamiento exclusivamente físico","Permite acceso remoto a recursos digitales","Funciona sin Internet","No permite compartir archivos"], ans:1 },
+  { q:"¿Qué herramienta es más adecuada para elaborar presentaciones académicas?", opts:["Excel","Access","PowerPoint","Outlook"], ans:2 },
+  { q:"¿Qué significa URL?", opts:["Uniform Resource Locator","Universal Reference Link","User Resource Language","Uniform Retrieval Location"], ans:0 },
+  { q:"¿Cuál de los siguientes representa un riesgo en Internet?", opts:["Uso de antivirus","Copias de seguridad","Phishing","Autenticación de dos factores"], ans:2 },
+  { q:"¿Qué es el phishing?", opts:["Método de almacenamiento","Técnica de fraude para obtener información confidencial","Programa educativo","Herramienta de búsqueda"], ans:1 },
+  { q:"¿Cuál es una buena práctica para proteger una cuenta digital?", opts:["Compartir contraseñas","Utilizar contraseñas seguras y únicas","Desactivar la seguridad","Guardar claves en redes sociales"], ans:1 },
+  { q:"¿Cuál es la función de un antivirus?", opts:["Mejorar la velocidad de Internet","Crear documentos","Detectar y eliminar software malicioso","Diseñar páginas web"], ans:2 },
+  { q:"¿Qué herramienta permite realizar reuniones virtuales?", opts:["Zoom","Word","Paint","Access"], ans:0 },
+  { q:"¿Qué significa TIC?", opts:["Tecnología Informática Computacional","Tecnologías de la Información y Comunicación","Técnicas Informáticas de Control","Tecnología Integral Computarizada"], ans:1 },
+  { q:"¿Cuál es una ventaja de utilizar documentos digitales?", opts:["Dificultan el acceso","Ocupan más espacio físico","Facilitan el almacenamiento y la distribución","No pueden modificarse"], ans:2 },
+  { q:"¿Qué es un software?", opts:["Parte física del computador","Conjunto de programas y aplicaciones","Cable de red","Memoria RAM"], ans:1 },
+  { q:"¿Qué tipo de software es Microsoft Word?", opts:["Sistema operativo","Software de aplicación","Firmware","Antivirus"], ans:1 },
+  { q:"¿Cuál es la principal función de Excel?", opts:["Crear videos","Diseñar páginas web","Gestionar hojas de cálculo","Navegar en Internet"], ans:2 },
+  { q:"¿Qué significa descargar un archivo?", opts:["Eliminar información","Transferir datos desde Internet al dispositivo local","Compartir información","Crear una copia de seguridad"], ans:1 },
+  { q:"¿Cuál es una ventaja del correo institucional?", opts:["Menor seguridad","Comunicación formal y organizada","Uso exclusivo para entretenimiento","Acceso limitado"], ans:1 },
+  { q:"¿Qué es una red informática?", opts:["Un sistema de impresión","Conjunto de dispositivos interconectados para compartir recursos","Un navegador web","Una memoria externa"], ans:1 },
+  { q:"¿Cuál de las siguientes opciones es un ejemplo de hardware?", opts:["Windows","Excel","Monitor","Google Chrome"], ans:2 },
+  { q:"¿Qué herramienta permite almacenar archivos en línea y compartirlos?", opts:["Google Drive","Paint","WordPad","Calculadora"], ans:0 },
+  { q:"¿Qué elemento ayuda a verificar la confiabilidad de una página web?", opts:["Diseño atractivo únicamente","Autor, fecha y fuentes citadas","Cantidad de imágenes","Publicidad"], ans:1 },
+  { q:"¿Cuál es la finalidad de una copia de seguridad?", opts:["Reducir la memoria RAM","Recuperar información ante pérdidas o fallos","Navegar más rápido","Eliminar archivos"], ans:1 },
+  { q:"¿Qué significa navegar por Internet?", opts:["Crear software","Explorar y acceder a información en la red","Reparar computadoras","Instalar hardware"], ans:1 },
+  { q:"¿Cuál es una ventaja de la transformación digital en instituciones?", opts:["Mayor lentitud en procesos","Reducción de acceso a la información","Automatización y eficiencia operativa","Eliminación total de personal"], ans:2 },
+  { q:"¿Qué es un hipervínculo?", opts:["Un archivo comprimido","Un enlace que dirige a otro recurso digital","Una memoria virtual","Un programa antivirus"], ans:1 },
+  { q:"¿Cuál es una característica del aprendizaje virtual?", opts:["Dependencia exclusiva de documentos impresos","Acceso flexible a contenidos educativos","Ausencia de comunicación","Imposibilidad de evaluación"], ans:1 },
+  { q:"¿Qué tecnología permite realizar búsquedas rápidas de información en la web?", opts:["Motores de búsqueda","Memorias USB","Impresoras","Escáneres"], ans:0 },
+  { q:"¿Cuál es el propósito principal de la alfabetización digital?", opts:["Limitar el acceso tecnológico","Desarrollar competencias para el uso eficiente y seguro de las tecnologías","Sustituir la educación tradicional","Reducir el uso de Internet"], ans:1 },
+  { q:"¿Por qué las herramientas informáticas son importantes en el ámbito académico e institucional?", opts:["Porque reemplazan completamente el trabajo humano","Porque solo sirven para entretenimiento","Porque mejoran la gestión, comunicación, investigación y productividad","Porque eliminan la necesidad de capacitación"], ans:2 },
+
+  // ── TEMA 2: Microsoft Word ───────────────────────────────────
+  { q:"¿Cuál es la función principal de Microsoft Word?", opts:["Crear hojas de cálculo","Crear y editar documentos de texto","Diseñar páginas web","Gestionar bases de datos"], ans:1 },
+  { q:"¿Qué elemento de Word contiene las pestañas Inicio, Insertar y Diseño?", opts:["Barra de estado","Cinta de opciones","Barra de desplazamiento","Panel de navegación"], ans:1 },
+  { q:"¿Cuál es el atajo para guardar un documento?", opts:["Ctrl + P","Ctrl + X","Ctrl + S","Ctrl + Z"], ans:2 },
+  { q:"¿Qué opción permite cambiar el tipo y tamaño de letra?", opts:["Diseño","Fuente","Referencias","Revisar"], ans:1 },
+  { q:"¿Cuál es la extensión predeterminada de un documento de Word?", opts:[".xls",".ppt",".docx",".pdf"], ans:2 },
+  { q:"¿Qué función cumple la herramienta 'Deshacer'?", opts:["Guardar documento","Repetir acción","Revertir la última acción realizada","Imprimir"], ans:2 },
+  { q:"¿Qué permite realizar la alineación justificada?", opts:["Centrar texto","Ajustar el texto a ambos márgenes","Alinear a la izquierda","Alinear a la derecha"], ans:1 },
+  { q:"¿Qué herramienta se utiliza para corregir errores ortográficos?", opts:["Diseño","Comentarios","Ortografía y gramática","Referencias"], ans:2 },
+  { q:"¿Cuál es el objetivo de utilizar estilos en Word?", opts:["Cambiar idioma","Aplicar formatos uniformes al documento","Insertar imágenes","Crear gráficos"], ans:1 },
+  { q:"¿Qué comando permite copiar texto?", opts:["Ctrl + V","Ctrl + C","Ctrl + A","Ctrl + N"], ans:1 },
+  { q:"¿Qué opción inserta una tabla?", opts:["Diseño","Insertar","Archivo","Revisar"], ans:1 },
+  { q:"¿Cuál es la principal utilidad de una tabla?", opts:["Decorar documentos","Organizar información en filas y columnas","Dibujar gráficos","Crear hipervínculos"], ans:1 },
+  { q:"¿Qué sucede al combinar celdas en una tabla?", opts:["Se eliminan datos","Se unen varias celdas en una sola","Se duplica la información","Se crea una nueva tabla"], ans:1 },
+  { q:"¿Qué opción permite agregar una imagen al documento?", opts:["Referencias","Revisar","Insertar > Imágenes","Archivo"], ans:2 },
+  { q:"¿Qué es un objeto en Word?", opts:["Un archivo ejecutable","Un elemento insertado como gráfico o forma","Una página nueva","Una plantilla"], ans:1 },
+  { q:"¿Qué función tiene el ajuste de texto en imágenes?", opts:["Cambiar colores","Definir cómo se posiciona la imagen respecto al texto","Imprimir imágenes","Reducir tamaño"], ans:1 },
+  { q:"¿Cuál es la ventaja de utilizar plantillas?", opts:["Reducen la calidad del documento","Facilitan la creación de documentos con formatos predefinidos","Eliminan imágenes","Bloquean la edición"], ans:1 },
+  { q:"¿Qué opción permite insertar encabezados?", opts:["Vista","Insertar","Diseño","Revisar"], ans:1 },
+  { q:"¿Qué elemento suele aparecer en el pie de página?", opts:["Título principal","Número de página","Imagen principal","Tabla de contenido"], ans:1 },
+  { q:"¿Cuál es la función de la vista preliminar?", opts:["Revisar cómo quedará el documento antes de imprimir","Corregir ortografía","Insertar tablas","Crear plantillas"], ans:0 },
+  { q:"¿Qué herramienta permite buscar una palabra dentro del documento?", opts:["Reemplazar","Buscar","Diseño","Organizar"], ans:1 },
+  { q:"¿Qué función tiene 'Buscar y reemplazar'?", opts:["Copiar imágenes","Sustituir texto automáticamente","Crear tablas","Numerar páginas"], ans:1 },
+  { q:"¿Qué es un memorando?", opts:["Documento académico","Comunicación interna institucional","Contrato legal","Informe financiero"], ans:1 },
+  { q:"¿Cuál es el propósito principal de un oficio?", opts:["Comunicación formal entre instituciones o dependencias","Crear gráficos","Registrar asistencia","Guardar archivos"], ans:0 },
+  { q:"¿Qué documento se utiliza para informar disposiciones o avisos al personal?", opts:["Memorando","Comunicado","Factura","Solicitud"], ans:1 },
+  { q:"¿Cuál es una sección básica de un oficio?", opts:["Índice","Asunto","Bibliografía","Anexo obligatorio"], ans:1 },
+  { q:"¿Qué característica distingue a los documentos institucionales?", opts:["Uso de lenguaje informal","Estructura organizada y formal","Ausencia de firmas","Uso exclusivo de imágenes"], ans:1 },
+  { q:"¿Qué herramienta permite crear una tabla de contenido automática?", opts:["Referencias","Diseño","Revisar","Vista"], ans:0 },
+  { q:"¿Cuál es la utilidad de las referencias en un documento?", opts:["Decorar páginas","Identificar fuentes de información","Cambiar formato","Insertar gráficos"], ans:1 },
+  { q:"¿Qué opción permite insertar una cita bibliográfica?", opts:["Inicio","Diseño","Referencias","Archivo"], ans:2 },
+  { q:"¿Qué función cumple la numeración de páginas?", opts:["Decorar el documento","Facilitar la organización y localización de contenido","Aumentar el tamaño del archivo","Corregir ortografía"], ans:1 },
+  { q:"¿Cuál es la mejor práctica para elaborar un informe institucional?", opts:["Utilizar diferentes formatos en cada página","Mantener uniformidad en estilos y estructura","Evitar títulos","No numerar páginas"], ans:1 },
+  { q:"¿Qué opción permite insertar formas y diagramas?", opts:["Insertar","Archivo","Revisar","Vista"], ans:0 },
+  { q:"¿Qué es una plantilla institucional?", opts:["Un archivo temporal","Un modelo predefinido para documentos oficiales","Una imagen corporativa","Una base de datos"], ans:1 },
+  { q:"¿Qué herramienta permite revisar cambios realizados por varios usuarios?", opts:["Control de cambios","Zoom","Diseño","Buscar"], ans:0 },
+  { q:"¿Cuál es una ventaja del control de cambios?", opts:["Eliminar documentos","Registrar modificaciones realizadas en el documento","Insertar tablas","Cambiar idioma"], ans:1 },
+  { q:"¿Qué opción permite proteger un documento contra modificaciones no autorizadas?", opts:["Guardar como","Restringir edición","Zoom","Vista previa"], ans:1 },
+  { q:"¿Qué característica debe tener una imagen insertada en un informe institucional?", opts:["Baja resolución","Relación con el contenido del documento","Tamaño aleatorio","Colores llamativos sin propósito"], ans:1 },
+  { q:"¿Cuál es la finalidad de un comunicado institucional?", opts:["Difundir información oficial a un grupo determinado","Crear tablas","Diseñar logotipos","Realizar cálculos"], ans:0 },
+  { q:"¿Qué contribuye a la calidad de un documento institucional?", opts:["Falta de organización","Errores ortográficos","Formato coherente, claridad y precisión","Uso excesivo de colores"], ans:2 },
+
+  // ── TEMA 3: Microsoft Excel ──────────────────────────────────
+  { q:"¿Qué es una celda en Microsoft Excel?", opts:["Un conjunto de hojas","La intersección entre una fila y una columna","Un gráfico estadístico","Una fórmula matemática"], ans:1 },
+  { q:"¿Cuál es la extensión predeterminada de un archivo de Excel?", opts:[".pptx",".docx",".xlsx",".pdf"], ans:2 },
+  { q:"¿Qué símbolo se utiliza para iniciar una fórmula en Excel?", opts:["#","@","=","%"], ans:2 },
+  { q:"¿Cuál de las siguientes es una fórmula válida?", opts:["SUMA(A1:A5)","=SUMA(A1:A5)","+SUMA(A1:A5)","A1+A5"], ans:1 },
+  { q:"¿Qué función permite sumar un conjunto de valores?", opts:["SI","CONTAR","SUMA","PROMEDIO"], ans:2 },
+  { q:"¿Qué función calcula el promedio de varios datos?", opts:["PROMEDIO","MAX","SUMA","SI"], ans:0 },
+  { q:"¿Qué función lógica evalúa una condición?", opts:["SUMA","SI","CONTAR","MIN"], ans:1 },
+  { q:"¿Qué representa el rango A1:A10?", opts:["Una sola celda","Diez columnas","Las celdas desde A1 hasta A10","Una hoja completa"], ans:2 },
+  { q:"¿Qué herramienta permite modificar el aspecto visual de una celda?", opts:["Formato de celdas","Diseño de página","Comentarios","Hipervínculos"], ans:0 },
+  { q:"¿Cuál de las siguientes opciones cambia el color de fondo de una celda?", opts:["Bordes","Relleno","Fuente","Combinar"], ans:1 },
+  { q:"¿Qué función devuelve el valor más alto de un rango?", opts:["MIN","PROMEDIO","MAX","SUMA"], ans:2 },
+  { q:"¿Qué función devuelve el valor más bajo de un rango?", opts:["MIN","SI","MAX","CONTAR"], ans:0 },
+  { q:"¿Cuál es la utilidad principal de Excel?", opts:["Editar videos","Gestionar y analizar datos","Diseñar páginas web","Crear sistemas operativos"], ans:1 },
+  { q:"¿Qué permite hacer la opción 'Combinar y centrar'?", opts:["Eliminar celdas","Unir varias celdas y centrar el contenido","Dividir columnas","Crear gráficos"], ans:1 },
+  { q:"¿Qué ocurre si se modifica un dato utilizado en una fórmula?", opts:["La fórmula desaparece","El resultado se actualiza automáticamente","El archivo se bloquea","No ocurre nada"], ans:1 },
+  { q:"¿Cuál es la función de los filtros?", opts:["Cambiar colores","Mostrar únicamente los datos que cumplen ciertos criterios","Eliminar filas","Crear gráficos"], ans:1 },
+  { q:"¿Qué herramienta permite ordenar datos alfabética o numéricamente?", opts:["Ordenar","Revisar","Insertar","Comentarios"], ans:0 },
+  { q:"¿Cuál es la referencia correcta de una celda?", opts:["10A","A10","10-A","Columna 10"], ans:1 },
+  { q:"¿Qué es una hoja de cálculo?", opts:["Un programa antivirus","Un documento compuesto por filas y columnas para trabajar datos","Un gráfico estadístico","Una plantilla de Word"], ans:1 },
+  { q:"¿Qué función cuenta las celdas que contienen números?", opts:["CONTAR","SUMA","SI","MAX"], ans:0 },
+  { q:"¿Cuál es la principal ventaja de utilizar fórmulas?", opts:["Reducen la precisión","Automatizan cálculos y disminuyen errores","Ocupan más espacio","Eliminan datos"], ans:1 },
+  { q:"¿Qué es un gráfico en Excel?", opts:["Una tabla de texto","Una representación visual de datos","Una fórmula avanzada","Un filtro"], ans:1 },
+  { q:"¿Qué tipo de gráfico es ideal para comparar cantidades?", opts:["Circular","Barras o columnas","Dispersión","Área"], ans:1 },
+  { q:"¿Qué gráfico se utiliza para mostrar porcentajes de un total?", opts:["Circular","Línea","Dispersión","Área"], ans:0 },
+  { q:"¿Qué gráfico es adecuado para mostrar tendencias en el tiempo?", opts:["Circular","Línea","Barras","Radar"], ans:1 },
+  { q:"¿Qué es el formato condicional?", opts:["Una función matemática","Una herramienta que aplica formatos según condiciones definidas","Un gráfico dinámico","Un filtro avanzado"], ans:1 },
+  { q:"¿Qué acción puede realizar el formato condicional?", opts:["Resaltar valores superiores a una cantidad específica","Eliminar datos automáticamente","Crear hojas nuevas","Insertar imágenes"], ans:0 },
+  { q:"¿Cuál es el resultado de =SUMA(10,20,30)?", opts:["50","60","40","70"], ans:1 },
+  { q:"¿Cuál es el resultado de =PROMEDIO(10,20,30)?", opts:["25","20","15","30"], ans:1 },
+  { q:"¿Qué devuelve la fórmula =SI(5>3;\"Sí\";\"No\")?", opts:["Error","No","Sí","5"], ans:2 },
+  { q:"¿Qué función sería útil para un control de gastos?", opts:["SUMA","Diseño","Revisar","Comentarios"], ans:0 },
+  { q:"¿Qué función permite calcular el gasto promedio mensual?", opts:["SI","MAX","PROMEDIO","CONTAR"], ans:2 },
+  { q:"¿Qué representa la referencia B5?", opts:["Columna B y fila 5","Fila B y columna 5","Hoja B","Rango 5"], ans:0 },
+  { q:"¿Qué herramienta facilita identificar rápidamente valores importantes?", opts:["Formato condicional","Hipervínculos","Encabezado","Comentarios"], ans:0 },
+  { q:"¿Cuál es una ventaja de utilizar gráficos?", opts:["Dificultan el análisis","Facilitan la interpretación de los datos","Eliminan la información numérica","Reducen la precisión"], ans:1 },
+  { q:"¿Qué permite hacer un inventario básico en Excel?", opts:["Organizar y controlar existencias","Crear videos","Diseñar páginas web","Instalar programas"], ans:0 },
+  { q:"¿Cuál es la finalidad de los encabezados en una tabla?", opts:["Decorar la hoja","Identificar el contenido de cada columna","Crear gráficos","Aplicar filtros"], ans:1 },
+  { q:"¿Qué ocurre al aplicar un filtro a una tabla?", opts:["Los datos se eliminan","Los datos se ordenan aleatoriamente","Se muestran únicamente los registros seleccionados","Se bloquea la hoja"], ans:2 },
+  { q:"¿Qué función es más adecuada para determinar si un producto necesita reposición?", opts:["SI","SUMA","CONTAR","PROMEDIO"], ans:0 },
+  { q:"¿Cuál es el principal beneficio de Excel en la gestión de datos?", opts:["Automatizar cálculos, organizar información y facilitar análisis","Crear sistemas operativos","Diseñar páginas web","Reemplazar bases de datos complejas completamente"], ans:0 },
+
+  // ── TEMA 4: PowerPoint ───────────────────────────────────────
+  { q:"¿Cuál es la función principal de Microsoft PowerPoint?", opts:["Crear hojas de cálculo","Elaborar presentaciones multimedia","Diseñar bases de datos","Administrar correos electrónicos"], ans:1 },
+  { q:"¿Qué elemento constituye la unidad básica de una presentación?", opts:["Página","Hoja","Diapositiva","Documento"], ans:2 },
+  { q:"¿Cuál es la extensión predeterminada de una presentación de PowerPoint?", opts:[".xlsx",".pptx",".docx",".pdf"], ans:1 },
+  { q:"¿Qué opción permite agregar una nueva diapositiva?", opts:["Revisar","Diseño","Nueva diapositiva","Animaciones"], ans:2 },
+  { q:"¿Qué sección contiene las herramientas para insertar imágenes, videos y gráficos?", opts:["Insertar","Vista","Revisar","Archivo"], ans:0 },
+  { q:"¿Cuál es la función de un diseño de diapositiva?", opts:["Configurar impresoras","Organizar la distribución del contenido","Aplicar fórmulas","Guardar archivos"], ans:1 },
+  { q:"¿Qué característica mejora la legibilidad de una diapositiva?", opts:["Mucho texto en párrafos largos","Uso de fuentes claras y legibles","Colores aleatorios","Imágenes borrosas"], ans:1 },
+  { q:"¿Cuál es el propósito de una plantilla en PowerPoint?", opts:["Crear bases de datos","Proporcionar diseños predeterminados","Insertar fórmulas","Crear gráficos estadísticos"], ans:1 },
+  { q:"¿Qué herramienta permite cambiar la apariencia general de la presentación?", opts:["Temas","Revisar","Notas","Hipervínculos"], ans:0 },
+  { q:"¿Qué es una transición?", opts:["Movimiento aplicado entre diapositivas","Cambio de color del texto","Efecto de sonido externo","Tipo de fuente"], ans:0 },
+  { q:"¿Qué son las animaciones?", opts:["Efectos aplicados a objetos dentro de una diapositiva","Cambios de diseño","Herramientas de impresión","Formatos de archivo"], ans:0 },
+  { q:"¿Cuál es la diferencia principal entre transición y animación?", opts:["No existe diferencia","La transición actúa entre diapositivas y la animación sobre objetos","La animación cambia colores y la transición elimina texto","Ambas solo agregan sonidos"], ans:1 },
+  { q:"¿Qué pestaña contiene las herramientas de animación?", opts:["Inicio","Diseño","Animaciones","Archivo"], ans:2 },
+  { q:"¿Qué elemento multimedia puede insertarse en PowerPoint?", opts:["Video","Audio","Imagen","Todas las anteriores"], ans:3 },
+  { q:"¿Cuál es una ventaja de utilizar imágenes en una presentación?", opts:["Reducen la comprensión","Refuerzan visualmente la información","Reemplazan totalmente el contenido","Eliminan la necesidad de explicar"], ans:1 },
+  { q:"¿Qué herramienta permite reproducir un video dentro de la presentación?", opts:["Insertar multimedia","Ortografía","Diseño de página","Comentarios"], ans:0 },
+  { q:"¿Qué es una presentación académica?", opts:["Una colección de imágenes sin propósito","Una exposición organizada de información educativa","Un documento financiero","Una hoja de cálculo"], ans:1 },
+  { q:"¿Cuál es la mejor práctica al elaborar diapositivas?", opts:["Saturarlas de texto","Utilizar ideas clave y elementos visuales","Usar muchos colores sin criterio","Evitar imágenes"], ans:1 },
+  { q:"¿Qué función tiene la vista Clasificador de diapositivas?", opts:["Revisar ortografía","Reorganizar diapositivas fácilmente","Insertar videos","Aplicar fórmulas"], ans:1 },
+  { q:"¿Qué herramienta ayuda a corregir errores ortográficos en PowerPoint?", opts:["Revisar","Insertar","Animaciones","Presentación"], ans:0 },
+  { q:"¿Qué opción permite agregar gráficos estadísticos en PowerPoint?", opts:["Insertar gráfico","Revisar","Diseño","Transiciones"], ans:0 },
+  { q:"¿Qué es un hipervínculo en PowerPoint?", opts:["Un efecto visual","Un enlace a otro recurso o diapositiva","Una animación","Una plantilla"], ans:1 },
+  { q:"¿Cuál es la finalidad de las notas del presentador?", opts:["Mostrar información adicional al expositor","Agregar imágenes","Aplicar transiciones","Imprimir documentos"], ans:0 },
+  { q:"¿Qué tipo de gráfico es útil para comparar cantidades en PowerPoint?", opts:["Circular","Barras","Dispersión","Área"], ans:1 },
+  { q:"¿Qué opción permite iniciar la presentación desde el principio?", opts:["F5","Ctrl + S","Ctrl + P","Esc"], ans:0 },
+  { q:"¿Qué tecla permite finalizar una presentación?", opts:["Enter","Esc","F1","Tab"], ans:1 },
+  { q:"¿Cuál es una ventaja de utilizar audio en una presentación?", opts:["Incrementar la atención del público cuando es pertinente","Sustituir todo el contenido","Eliminar las imágenes","Reducir la comprensión"], ans:0 },
+  { q:"¿Qué aspecto debe mantenerse uniforme en toda la presentación?", opts:["Diseño y estilo visual","Tamaño aleatorio de letra","Colores distintos en cada diapositiva","Fuentes diferentes en cada título"], ans:0 },
+  { q:"¿Qué característica debe tener una presentación efectiva?", opts:["Organización lógica de ideas","Exceso de texto","Información desordenada","Imágenes sin relación"], ans:0 },
+  { q:"¿Qué función tienen los temas en PowerPoint?", opts:["Crear bases de datos","Aplicar estilos coherentes a toda la presentación","Insertar videos","Editar audio"], ans:1 },
+  { q:"¿Qué herramienta permite cambiar el fondo de una diapositiva?", opts:["Formato de fondo","Comentarios","Revisar","Hipervínculos"], ans:0 },
+  { q:"¿Qué efecto visual permite que un objeto aparezca gradualmente?", opts:["Animación de entrada","Hipervínculo","Encabezado","Vista previa"], ans:0 },
+  { q:"¿Qué tipo de contenido es recomendable para una diapositiva?", opts:["Ideas principales resumidas","Párrafos extensos","Texto copiado íntegramente de libros","Información irrelevante"], ans:0 },
+  { q:"¿Qué ventaja ofrece insertar gráficos en una presentación?", opts:["Facilitan la interpretación de datos","Incrementan la complejidad innecesaria","Ocultan información","Sustituyen toda explicación"], ans:0 },
+  { q:"¿Cuál es la finalidad de las transiciones en PowerPoint?", opts:["Mejorar el cambio visual entre diapositivas","Editar imágenes","Crear tablas","Corregir ortografía"], ans:0 },
+  { q:"¿Qué ocurre si se abusa de las animaciones?", opts:["Mejora siempre la presentación","Puede distraer a la audiencia","Incrementa la calidad académica automáticamente","Reduce el tamaño del archivo"], ans:1 },
+  { q:"¿Qué herramienta permite insertar una imagen desde el equipo en PowerPoint?", opts:["Insertar > Imágenes","Revisar","Animaciones","Diseño"], ans:0 },
+  { q:"¿Cuál es una buena práctica durante una exposición?", opts:["Leer todo el texto de las diapositivas","Explicar las ideas con apoyo visual","Ignorar al público","Mostrar diapositivas sin explicación"], ans:1 },
+  { q:"¿Qué elemento contribuye a una comunicación visual efectiva en PowerPoint?", opts:["Uso equilibrado de texto e imágenes","Diapositivas saturadas","Fuentes ilegibles","Colores excesivos"], ans:0 },
+  { q:"¿Cuál es el objetivo principal de PowerPoint en el ámbito académico?", opts:["Comunicar información de manera clara, organizada y visual","Crear bases de datos complejas","Programar aplicaciones","Reemplazar documentos escritos"], ans:0 },
+
+  // ── TEMA 5: Inteligencia Artificial ─────────────────────────
+  { q:"¿Qué es la inteligencia artificial?", opts:["Un sistema operativo para computadoras","Una tecnología que permite a las máquinas simular capacidades humanas","Un programa para crear documentos","Un lenguaje de programación"], ans:1 },
+  { q:"¿Cuál es el objetivo principal de la inteligencia artificial?", opts:["Reemplazar Internet","Automatizar tareas y resolver problemas mediante algoritmos inteligentes","Fabricar computadoras","Crear redes sociales"], ans:1 },
+  { q:"¿Cuál de las siguientes es una aplicación cotidiana de la IA?", opts:["Calculadora básica","Asistentes virtuales como Siri o Google Assistant","Papel impreso","Disco compacto"], ans:1 },
+  { q:"¿Qué disciplina sirve de base para el desarrollo de la IA?", opts:["Matemáticas y ciencias de la computación","Literatura","Filosofía exclusivamente","Educación física"], ans:0 },
+  { q:"¿Qué es el aprendizaje automático (Machine Learning)?", opts:["Un tipo de hardware","Un método mediante el cual los sistemas aprenden a partir de datos","Un navegador web","Un sistema operativo"], ans:1 },
+  { q:"¿Cuál de los siguientes es un ejemplo de IA?", opts:["Reconocimiento facial en teléfonos móviles","Cuaderno de apuntes","Impresora tradicional","Calculadora mecánica"], ans:0 },
+  { q:"¿Qué tipo de IA existe actualmente de manera predominante?", opts:["IA General","IA Superinteligente","IA Estrecha o Débil","IA Autónoma Total"], ans:2 },
+  { q:"¿Qué caracteriza a la IA estrecha?", opts:["Puede realizar cualquier actividad humana","Está especializada en tareas específicas","Tiene conciencia propia","Controla Internet"], ans:1 },
+  { q:"¿Qué es la IA general?", opts:["Una IA capaz de realizar cualquier tarea intelectual humana","Un programa antivirus","Una base de datos","Un procesador"], ans:0 },
+  { q:"¿Qué es una red neuronal artificial?", opts:["Un sistema inspirado en el funcionamiento del cerebro humano","Un cable de red","Una memoria USB","Un sistema operativo"], ans:0 },
+  { q:"¿Cuál es una aplicación de la IA en la educación?", opts:["Tutorías inteligentes y personalización del aprendizaje","Fabricación de libros","Impresión de documentos","Redacción manual"], ans:0 },
+  { q:"¿Qué aplicación de IA se utiliza en plataformas de entretenimiento?", opts:["Recomendación de películas y música","Instalación eléctrica","Impresión láser","Procesamiento de textos"], ans:0 },
+  { q:"¿Cuál es una aplicación de IA en la medicina?", opts:["Diagnóstico asistido por imágenes médicas","Fabricación de papel","Construcción de carreteras","Producción agrícola manual"], ans:0 },
+  { q:"¿Qué función cumple la IA en los vehículos autónomos?", opts:["Diseñar carreteras","Tomar decisiones de conducción mediante sensores y algoritmos","Fabricar neumáticos","Reemplazar motores"], ans:1 },
+  { q:"¿Qué es el procesamiento del lenguaje natural?", opts:["Tecnología que permite a las máquinas comprender y generar lenguaje humano","Método de impresión","Tipo de procesador","Sistema de almacenamiento"], ans:0 },
+  { q:"¿Qué ejemplo utiliza procesamiento del lenguaje natural?", opts:["Chatbots","Calculadora","Impresora","Escáner"], ans:0 },
+  { q:"¿Qué es un chatbot?", opts:["Un dispositivo móvil","Un programa que interactúa con personas mediante conversaciones","Un antivirus","Una hoja de cálculo"], ans:1 },
+  { q:"¿Cuál es una ventaja de la inteligencia artificial?", opts:["Incrementar la eficiencia en tareas repetitivas","Eliminar completamente los errores","Sustituir todas las profesiones","Evitar el uso de tecnología"], ans:0 },
+  { q:"¿Cuál es un riesgo potencial asociado a la IA?", opts:["Sesgos en los algoritmos y privacidad de datos","Disminución de la velocidad de impresión","Menor capacidad de almacenamiento físico","Incremento del uso de papel"], ans:0 },
+  { q:"¿Qué es un algoritmo?", opts:["Un conjunto de instrucciones para resolver un problema","Un componente físico del computador","Un navegador web","Una impresora"], ans:0 },
+  { q:"¿Qué recurso es fundamental para entrenar sistemas de IA?", opts:["Datos","Papel","Tinta","Carpetas físicas"], ans:0 },
+  { q:"¿Qué es el reconocimiento de voz?", opts:["Tecnología que identifica y procesa el habla humana","Un micrófono tradicional","Una cámara digital","Un programa de diseño"], ans:0 },
+  { q:"¿Qué aplicación de IA se utiliza en la banca?", opts:["Detección de fraudes financieros","Impresión de cheques manuales","Fabricación de monedas","Producción de papel moneda"], ans:0 },
+  { q:"¿Qué es la visión por computadora?", opts:["Capacidad de las máquinas para interpretar imágenes y videos","Tecnología para mejorar monitores","Diseño de cámaras digitales","Edición de fotografías"], ans:0 },
+  { q:"¿Qué tipo de IA se considera aún teórica?", opts:["IA General","IA Estrecha","Sistemas Expertos","Motores de búsqueda"], ans:0 },
+  { q:"¿Cuál es una aplicación de la IA en el comercio electrónico?", opts:["Recomendación personalizada de productos","Fabricación de productos","Transporte manual de mercancías","Impresión de catálogos"], ans:0 },
+  { q:"¿Qué permite el aprendizaje profundo (Deep Learning)?", opts:["Analizar grandes cantidades de datos mediante redes neuronales complejas","Reparar computadoras","Crear documentos impresos","Organizar carpetas"], ans:0 },
+  { q:"¿Qué impacto positivo puede generar la IA en la sociedad?", opts:["Mejorar la productividad y la innovación","Eliminar el aprendizaje humano","Reducir el acceso a la información","Sustituir completamente la creatividad"], ans:0 },
+  { q:"¿Qué aspecto ético es importante en el desarrollo de la IA?", opts:["Transparencia y uso responsable de los datos","Uso ilimitado de información personal","Eliminación de regulaciones","Restricción del acceso a la tecnología"], ans:0 },
+  { q:"¿Cuál es una aplicación de IA en la agricultura?", opts:["Monitoreo inteligente de cultivos","Fabricación de fertilizantes","Impresión de etiquetas","Transporte manual"], ans:0 },
+  { q:"¿Qué significa automatización mediante IA?", opts:["Ejecución automática de tareas con mínima intervención humana","Uso exclusivo de robots físicos","Eliminación de computadoras","Sustitución de Internet"], ans:0 },
+  { q:"¿Qué son los sistemas expertos?", opts:["Programas diseñados para tomar decisiones en áreas específicas","Equipos de impresión","Bases de datos tradicionales","Redes sociales"], ans:0 },
+  { q:"¿Cuál es una aplicación de IA en seguridad informática?", opts:["Detección de amenazas y ataques cibernéticos","Creación de virus","Instalación de hardware","Producción de dispositivos"], ans:0 },
+  { q:"¿Qué característica diferencia a la IA de los programas tradicionales?", opts:["Capacidad de aprender y mejorar con datos","Uso exclusivo de Internet","Mayor tamaño del software","Uso obligatorio de robots"], ans:0 },
+  { q:"¿Qué herramienta utiliza IA para traducir idiomas automáticamente?", opts:["Traductores automáticos inteligentes","Procesadores de texto básicos","Calculadoras científicas","Navegadores sin conexión"], ans:0 },
+  { q:"¿Qué sector se beneficia significativamente de la IA?", opts:["Salud","Educación","Industria","Todos los anteriores"], ans:3 },
+  { q:"¿Qué es un asistente virtual?", opts:["Un programa que ayuda a los usuarios mediante comandos o preguntas","Una impresora inteligente","Una memoria externa","Un servidor físico"], ans:0 },
+  { q:"¿Cuál es una limitación actual de la IA?", opts:["Dependencia de datos de calidad para funcionar adecuadamente","Incapacidad de procesar información","Falta total de aplicaciones reales","Imposibilidad de automatizar tareas"], ans:0 },
+  { q:"¿Qué efecto puede tener la IA en el mercado laboral?", opts:["Transformar funciones y generar nuevas oportunidades laborales","Eliminar todas las profesiones existentes","Impedir la capacitación profesional","Prohibir el uso de tecnología"], ans:0 },
+  { q:"¿Por qué es importante conocer la inteligencia artificial?", opts:["Porque influye cada vez más en la educación, el trabajo y la vida cotidiana","Porque reemplaza completamente al ser humano","Porque elimina la necesidad de estudiar","Porque sustituye todas las tecnologías existentes"], ans:0 },
+
+  // ── TEMA 6: Seguridad Digital ────────────────────────────────
+  { q:"¿Qué se entiende por seguridad digital?", opts:["Protección de la información y los sistemas informáticos","Creación de redes sociales","Diseño de páginas web","Instalación de programas"], ans:0 },
+  { q:"¿Cuál es una característica de una contraseña segura?", opts:["Contener solo números","Ser corta y fácil de recordar","Combinar letras, números y caracteres especiales","Utilizar el nombre del usuario"], ans:2 },
+  { q:"¿Qué práctica ayuda a proteger una cuenta en línea?", opts:["Compartir contraseñas con amigos","Utilizar autenticación de dos factores","Publicar información personal","Guardar claves en redes sociales"], ans:1 },
+  { q:"¿Qué es el phishing (seguridad digital)?", opts:["Una herramienta de seguridad","Un tipo de fraude para obtener información confidencial","Un programa antivirus","Un sistema operativo"], ans:1 },
+  { q:"¿Cuál es una buena práctica de navegación responsable?", opts:["Abrir cualquier enlace recibido","Verificar la autenticidad de los sitios web","Compartir datos personales libremente","Descargar archivos desconocidos"], ans:1 },
+  { q:"¿Qué significa proteger los datos personales?", opts:["Compartirlos en redes sociales","Limitar el acceso a información sensible","Publicarlos en Internet","Almacenarlos sin contraseña"], ans:1 },
+  { q:"¿Qué riesgo existe al utilizar redes Wi-Fi públicas?", opts:["Mayor velocidad de conexión","Posible interceptación de datos","Mejor protección de la información","Menor consumo de batería"], ans:1 },
+  { q:"¿Cuál es una buena práctica en redes sociales?", opts:["Publicar información confidencial","Configurar adecuadamente la privacidad de la cuenta","Aceptar todas las solicitudes de amistad","Compartir contraseñas"], ans:1 },
+  { q:"¿Qué función cumple un antivirus (seguridad digital)?", opts:["Crear documentos","Detectar y eliminar software malicioso","Diseñar páginas web","Gestionar correos electrónicos"], ans:1 },
+  { q:"¿Qué es una copia de seguridad?", opts:["Una actualización del sistema","Un respaldo de la información para recuperarla en caso de pérdida","Un antivirus","Un documento temporal"], ans:1 },
+  { q:"¿Cuál es la principal utilidad de las copias de seguridad?", opts:["Ahorrar energía","Recuperar información ante incidentes","Mejorar la velocidad de Internet","Reducir archivos"], ans:1 },
+  { q:"¿Qué debe verificarse antes de abrir un correo electrónico sospechoso?", opts:["El remitente y el contenido del mensaje","El color del correo","El tamaño de la pantalla","La velocidad de Internet"], ans:0 },
+  { q:"¿Qué es un incidente de seguridad digital?", opts:["Un evento que compromete la información o los sistemas","Una actualización de software","Una impresión de documentos","Una copia de seguridad"], ans:0 },
+  { q:"¿Qué medida es recomendable ante un intento de phishing?", opts:["Proporcionar los datos solicitados","Ignorar y reportar el mensaje sospechoso","Reenviarlo a otros usuarios","Descargar los archivos adjuntos"], ans:1 },
+  { q:"¿Qué significa confidencialidad de la información?", opts:["Que la información sea pública","Que solo accedan personas autorizadas","Que pueda modificarse libremente","Que no tenga respaldo"], ans:1 },
+  { q:"¿Qué es la integridad de la información?", opts:["Garantizar que los datos no sean alterados indebidamente","Compartir información libremente","Almacenar datos sin protección","Eliminar archivos antiguos"], ans:0 },
+  { q:"¿Qué es la disponibilidad de la información?", opts:["Que la información esté accesible cuando sea necesaria","Que sea pública para todos","Que no tenga respaldo","Que sea confidencial exclusivamente"], ans:0 },
+  { q:"¿Cuál es una medida de respuesta ante un incidente digital?", opts:["Ignorarlo","Informar inmediatamente a los responsables de seguridad","Compartirlo en redes sociales","Eliminar toda la información"], ans:1 },
+  { q:"¿Qué es la transformación digital?", opts:["Cambio organizacional mediante el uso de tecnologías digitales","Sustitución total del personal","Uso exclusivo de Internet","Eliminación de procesos administrativos"], ans:0 },
+  { q:"¿Cuál es un beneficio de la transformación digital?", opts:["Incremento de la eficiencia y productividad","Mayor uso de papel","Menor acceso a la información","Reducción de la comunicación"], ans:0 },
+  { q:"¿Qué impacto tiene la transformación digital en la educación?", opts:["Facilita el aprendizaje virtual y el acceso a recursos digitales","Elimina a los docentes","Reduce la información disponible","Impide el aprendizaje colaborativo"], ans:0 },
+  { q:"¿Cuál es una ventaja de las plataformas educativas virtuales?", opts:["Acceso flexible a contenidos educativos","Eliminación de evaluaciones","Menor interacción académica","Uso exclusivo presencial"], ans:0 },
+  { q:"¿Qué tecnología es clave en la transformación digital?", opts:["Inteligencia artificial","Papel carbón","Máquina de escribir","Fax mecánico"], ans:0 },
+  { q:"¿Qué impacto tiene la transformación digital en la sociedad?", opts:["Mejora la comunicación y el acceso a servicios","Reduce el acceso a la información","Elimina la innovación","Limita el desarrollo tecnológico"], ans:0 },
+  { q:"¿Qué es el gobierno digital?", opts:["Uso de tecnologías para mejorar los servicios públicos","Administración basada en documentos físicos únicamente","Eliminación de trámites","Uso exclusivo de redes sociales"], ans:0 },
+  { q:"¿Qué ventaja ofrece la digitalización de trámites?", opts:["Mayor rapidez y eficiencia","Más uso de papel","Mayor tiempo de espera","Menor accesibilidad"], ans:0 },
+  { q:"¿Qué aplicación de la transformación digital se utiliza en el sector público?", opts:["Servicios en línea para ciudadanos","Eliminación de bases de datos","Reducción de comunicaciones","Sustitución total de servidores"], ans:0 },
+  { q:"¿Qué es la interoperabilidad digital?", opts:["Capacidad de los sistemas para intercambiar información","Creación de redes sociales","Instalación de hardware","Impresión remota"], ans:0 },
+  { q:"¿Qué beneficio aporta la transformación digital al Sector Defensa?", opts:["Mejora la gestión de información y la toma de decisiones","Reduce la capacidad operativa","Elimina las comunicaciones","Sustituye completamente al personal"], ans:0 },
+  { q:"¿Qué herramienta favorece el análisis de grandes volúmenes de datos en defensa?", opts:["Analítica de datos","Papel impreso","Archivadores físicos","Fotocopias"], ans:0 },
+  { q:"¿Qué papel cumple la ciberseguridad en el Sector Defensa?", opts:["Proteger sistemas e información estratégica","Crear redes sociales","Reducir el uso de computadoras","Diseñar uniformes"], ans:0 },
+  { q:"¿Qué es una amenaza informática?", opts:["Cualquier situación que pueda comprometer la seguridad de los sistemas","Un documento digital","Una hoja de cálculo","Una copia de seguridad"], ans:0 },
+  { q:"¿Qué acción fortalece la seguridad institucional?", opts:["Capacitación constante del personal","Compartir contraseñas","Ignorar actualizaciones","Usar software no autorizado"], ans:0 },
+  { q:"¿Qué es la autenticación de dos factores?", opts:["Método de seguridad que requiere dos formas de verificación","Un antivirus","Una red privada","Una copia de seguridad"], ans:0 },
+  { q:"¿Qué ventaja ofrece el almacenamiento en la nube (seguridad)?", opts:["Acceso remoto y respaldo de información","Eliminación de la seguridad","Uso exclusivo sin Internet","Mayor riesgo obligatorio"], ans:0 },
+  { q:"¿Qué práctica ayuda a prevenir incidentes de seguridad?", opts:["Mantener actualizado el software","Desactivar antivirus","Compartir información confidencial","Utilizar contraseñas débiles"], ans:0 },
+  { q:"¿Qué es la resiliencia digital?", opts:["Capacidad de recuperarse ante incidentes tecnológicos","Uso exclusivo de redes sociales","Creación de páginas web","Instalación de hardware"], ans:0 },
+  { q:"¿Qué impacto tiene la transformación digital en la defensa nacional?", opts:["Fortalece capacidades de gestión, comunicación y seguridad","Reduce la capacidad de respuesta","Elimina los sistemas tecnológicos","Incrementa el uso exclusivo de documentos físicos"], ans:0 },
+  { q:"¿Qué principio es fundamental para proteger la información institucional?", opts:["Confidencialidad, integridad y disponibilidad","Velocidad, diseño y formato","Hardware, software y periféricos","Impresión, escaneo y copia"], ans:0 },
+  { q:"¿Por qué es importante la seguridad digital y la transformación digital en las instituciones?", opts:["Porque fortalecen la protección de la información y mejoran la eficiencia organizacional","Porque eliminan toda participación humana","Porque sustituyen completamente los procesos institucionales","Porque reducen el uso de tecnologías"], ans:0 },
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let selectedSize  = null;
+let orderMode     = 'random';   // 'random' | 'seq'
+let testQuestions = [];
+let currentIdx    = 0;
+let answered      = false;
+let results       = [];  // { q, opts, ans, userAns }
+
+// ══════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function validateRange() {
+  const from = parseInt(document.getElementById('range-from').value) || 0;
+  const to   = parseInt(document.getElementById('range-to').value)   || 0;
+  const err  = document.getElementById('range-error');
+  if (from < 1 || to > BANK.length || from >= to) {
+    err.classList.add('visible');
+    return false;
+  }
+  err.classList.remove('visible');
+  return true;
+}
+
+function updateStartBtn() {
+  const sizeOk  = selectedSize !== null;
+  const rangeOk = orderMode === 'random' || validateRange();
+  document.getElementById('start-btn').disabled = !(sizeOk && rangeOk);
+}
+
+// ══════════════════════════════════════════════════════════════
+//  HOME — order mode toggle
+// ══════════════════════════════════════════════════════════════
+document.getElementById('mode-random').addEventListener('click', () => {
+  orderMode = 'random';
+  document.getElementById('mode-random').classList.add('selected');
+  document.getElementById('mode-seq').classList.remove('selected');
+  document.getElementById('range-panel').classList.remove('visible');
+  updateStartBtn();
+});
+
+document.getElementById('mode-seq').addEventListener('click', () => {
+  orderMode = 'seq';
+  document.getElementById('mode-seq').classList.add('selected');
+  document.getElementById('mode-random').classList.remove('selected');
+  document.getElementById('range-panel').classList.add('visible');
+  updateStartBtn();
+});
+
+document.getElementById('range-from').addEventListener('input', updateStartBtn);
+document.getElementById('range-to').addEventListener('input', updateStartBtn);
+
+// ══════════════════════════════════════════════════════════════
+//  HOME — size selection
+// ══════════════════════════════════════════════════════════════
+document.querySelectorAll('.mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedSize = parseInt(card.dataset.size);
+    updateStartBtn();
+  });
+});
+
+document.getElementById('start-btn').addEventListener('click', startTest);
+
+function buildQuestions() {
+  if (orderMode === 'seq') {
+    const from = parseInt(document.getElementById('range-from').value) - 1; // 0-based
+    const to   = parseInt(document.getElementById('range-to').value);       // exclusive
+    return BANK.slice(from, to); // already in order
+  }
+  // random: take selectedSize from full shuffled bank
+  const size = Math.min(selectedSize, BANK.length);
+  return shuffle(BANK).slice(0, size);
+}
+
+function startTest() {
+  if (orderMode === 'seq' && !validateRange()) return;
+  let pool = buildQuestions();
+
+  // In seq mode, still cap by selectedSize if user picked one
+  // (seq always uses the whole range but respects size cap for "total" card)
+  if (orderMode === 'seq') {
+    const size = Math.min(selectedSize, pool.length);
+    pool = pool.slice(0, size);
+  }
+
+  testQuestions = pool;
+  currentIdx = 0;
+  results    = [];
+
+  // update badge
+  const badge = document.getElementById('mode-badge');
+  if (orderMode === 'seq') {
+    const from = document.getElementById('range-from').value;
+    const to   = document.getElementById('range-to').value;
+    badge.textContent = `Secuencia ${from}–${to}`;
+  } else {
+    badge.textContent = 'Aleatorio';
+  }
+
+  show('quiz-screen');
+  renderQuestion();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+function renderQuestion() {
+  const q   = testQuestions[currentIdx];
+  const tot = testQuestions.length;
+
+  document.getElementById('q-current').textContent  = currentIdx + 1;
+  document.getElementById('q-total').textContent    = tot;
+  document.getElementById('progress-fill').style.width = `${(currentIdx / tot) * 100}%`;
+  document.getElementById('q-num-label').textContent = `Pregunta ${currentIdx + 1} de ${tot}`;
+  document.getElementById('q-text').textContent     = q.q;
+
+  const correct = results.filter(r => r.userAns === r.ans).length;
+  const wrong   = results.filter(r => r.userAns !== r.ans).length;
+  document.getElementById('q-score-live').innerHTML = `✓ ${correct} &nbsp;✗ ${wrong}`;
+
+  // options
+  const container = document.getElementById('q-options');
+  container.innerHTML = '';
+  const keys = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-key">${keys[i]}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => selectAnswer(i));
+    container.appendChild(btn);
+  });
+
+  // reset feedback
+  const fb = document.getElementById('feedback-box');
+  fb.className = 'feedback-box';
+  document.getElementById('btn-next').classList.remove('visible');
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q    = testQuestions[currentIdx];
+  const keys = ['A','B','C','D'];
+  const btns = document.querySelectorAll('.option-btn');
+
+  btns.forEach(b => b.disabled = true);
+
+  if (idx === q.ans) {
+    btns[idx].classList.add('correct');
+    showFeedback(true, `✓ ¡Correcto! La respuesta es ${keys[q.ans]}.`);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    showFeedback(false, `✗ Incorrecto. La respuesta correcta era ${keys[q.ans]}: ${q.opts[q.ans]}`);
+  }
+
+  results.push({ ...q, userAns: idx });
+  document.getElementById('btn-next').classList.add('visible');
+
+  // last question → change button label
+  if (currentIdx === testQuestions.length - 1) {
+    document.getElementById('btn-next').textContent = 'Ver resultados →';
+  } else {
+    document.getElementById('btn-next').textContent = 'Siguiente →';
+  }
+}
+
+function showFeedback(ok, msg) {
+  const box  = document.getElementById('feedback-box');
+  const icon = document.getElementById('feedback-icon');
+  const txt  = document.getElementById('feedback-msg');
+  box.className = 'feedback-box show ' + (ok ? 'ok' : 'ko');
+  icon.textContent = ok ? '✓' : '✗';
+  txt.textContent  = msg;
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  currentIdx++;
+  if (currentIdx >= testQuestions.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+});
+
+// ══════════════════════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════════════════════
+function showResults() {
+  const total   = results.length;
+  const correct = results.filter(r => r.userAns === r.ans).length;
+  const wrong   = total - correct;
+  const pct     = Math.round((correct / total) * 100);
+
+  document.getElementById('stat-correct').textContent = correct;
+  document.getElementById('stat-wrong').textContent   = wrong;
+  document.getElementById('stat-total').textContent   = total;
+  document.getElementById('score-pct-val').textContent = pct + '%';
+
+  const ring    = document.getElementById('score-ring');
+  const pctEl   = document.getElementById('score-pct-val');
+  let tier;
+  if (pct >= 80)      { tier = 'great'; }
+  else if (pct >= 50) { tier = 'ok';    }
+  else                { tier = 'bad';   }
+  ring.className  = 'score-ring ' + tier;
+  pctEl.className = 'score-pct ' + tier;
+
+  const headings = {
+    great: '¡Excelente desempeño!',
+    ok:    'Buen intento, sigue practicando',
+    bad:   'Necesitas repasar el material'
+  };
+  const subs = {
+    great: `Respondiste correctamente ${correct} de ${total} preguntas. ¡Muy bien preparado!`,
+    ok:    `Respondiste correctamente ${correct} de ${total} preguntas. Refuerza los temas con errores.`,
+    bad:   `Respondiste correctamente ${correct} de ${total} preguntas. Te recomendamos revisar el balotario completo.`
+  };
+  document.getElementById('result-heading').textContent = headings[tier];
+  document.getElementById('result-sub').textContent     = subs[tier];
+
+  // review wrong answers
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  const keys = ['A','B','C','D'];
+  const wrongOnes = results.filter(r => r.userAns !== r.ans);
+
+  if (wrongOnes.length === 0) {
+    list.innerHTML = '<p style="color:var(--green);text-align:center;padding:20px;">🎉 ¡Sin errores! Respondiste todo correctamente.</p>';
+  } else {
+    wrongOnes.forEach((r, i) => {
+      const div = document.createElement('div');
+      div.className = 'review-item';
+      div.innerHTML = `
+        <div class="review-q-num">Error ${i+1}</div>
+        <div class="review-q-text">${r.q}</div>
+        <div class="review-answers">
+          <div class="review-answer your-wrong">
+            <span class="ak">${keys[r.userAns]}</span>
+            <span>Tu respuesta: ${r.opts[r.userAns]}</span>
+          </div>
+          <div class="review-answer correct">
+            <span class="ak">${keys[r.ans]}</span>
+            <span>Respuesta correcta: ${r.opts[r.ans]}</span>
+          </div>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  // hide review section title if no errors
+  document.getElementById('review-section').style.display = wrongOnes.length ? 'block' : 'block';
+
+  // update progress bar to 100%
+  document.getElementById('progress-fill').style.width = '100%';
+
+  show('results-screen');
+}
+
+document.getElementById('btn-retry').addEventListener('click', () => {
+  currentIdx = 0;
+  results    = [];
+  // rebuild with same settings
+  let pool = buildQuestions();
+  if (orderMode === 'seq') {
+    pool = pool.slice(0, Math.min(selectedSize, pool.length));
+  }
+  testQuestions = pool;
+  show('quiz-screen');
+  renderQuestion();
+});
+
+document.getElementById('btn-home').addEventListener('click', () => {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('start-btn').disabled = true;
+  selectedSize = null;
+  // reset order mode to random
+  orderMode = 'random';
+  document.getElementById('mode-random').classList.add('selected');
+  document.getElementById('mode-seq').classList.remove('selected');
+  document.getElementById('range-panel').classList.remove('visible');
+  document.getElementById('range-error').classList.remove('visible');
+  show('home-screen');
+});
+</script>
+</body>
+</html>
