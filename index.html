@@ -538,7 +538,7 @@
 
 <header>
   <div class="logo-badge">HIC</div>
-  <h1>Balotario — <span>Herramientas Informáticas</span> y Ciberseguridad 2026-I</h1>
+  <h1>Entrenamiento — <span>Herramientas Informáticas</span> y Ciberseguridad 2026-I</h1>
 </header>
 
 <main>
@@ -662,7 +662,7 @@
 
 </main>
 
-<footer>IESTPN-CITEN · 2026-I · T3 PDA. Trejo Sare Pablo Alejandro</footer>
+<footer>Docente · 2026-I · T3 PDA. Trejo Sare Pablo Alejandro</footer>
 
 <script>
 // ══════════════════════════════════════════════════════════════
@@ -962,9 +962,14 @@ function validateRange() {
 }
 
 function updateStartBtn() {
-  const sizeOk  = selectedSize !== null;
-  const rangeOk = orderMode === 'random' || validateRange();
-  document.getElementById('start-btn').disabled = !(sizeOk && rangeOk);
+  let ok;
+  if (orderMode === 'random') {
+    ok = selectedSize !== null;
+  } else {
+    // sequential: only needs a valid range; size card is optional (uses full range)
+    ok = validateRange();
+  }
+  document.getElementById('start-btn').disabled = !ok;
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1020,10 +1025,11 @@ function startTest() {
 
   // In seq mode, still cap by selectedSize if user picked one
   // (seq always uses the whole range but respects size cap for "total" card)
-  if (orderMode === 'seq') {
+  if (orderMode === 'seq' && selectedSize !== null) {
     const size = Math.min(selectedSize, pool.length);
     pool = pool.slice(0, size);
   }
+  // if seq mode and no size card selected: use full range
 
   testQuestions = pool;
   currentIdx = 0;
@@ -1206,7 +1212,7 @@ document.getElementById('btn-retry').addEventListener('click', () => {
   results    = [];
   // rebuild with same settings
   let pool = buildQuestions();
-  if (orderMode === 'seq') {
+  if (orderMode === 'seq' && selectedSize !== null) {
     pool = pool.slice(0, Math.min(selectedSize, pool.length));
   }
   testQuestions = pool;
